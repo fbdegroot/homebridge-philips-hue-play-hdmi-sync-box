@@ -136,11 +136,6 @@
               "maximum": 200,
               "step": 1,
               "required": false
-            },
-            "syncActive": {
-                "title": "Sync Active",
-                "type": "boolean",
-                "default": true
             }
           }
         }

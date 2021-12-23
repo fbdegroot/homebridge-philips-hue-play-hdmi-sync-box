@@ -24,6 +24,8 @@ export class PhilipsHuePlayHDMISyncBoxPlatform implements DynamicPlatformPlugin 
     public readonly syncBoxStateSubject: ReplaySubject<PhilipsHueHDMIPlaySyncBoxState>;
     public readonly syncBoxState$: Observable<PhilipsHueHDMIPlaySyncBoxState>;
 
+    private throttleId?: NodeJS.Timeout;
+
     constructor(
         public readonly log: Logger,
         config: Config,
@@ -71,6 +73,12 @@ export class PhilipsHuePlayHDMISyncBoxPlatform implements DynamicPlatformPlugin 
         if (!this.config.presets) {
             return;
         }
+
+        this.config.presets.push({
+            name: 'Sync - Off',
+            uniqueId: 'sync-off',
+            isValid: () => true
+        });
 
         // loop over the discovered devices and register each one if it has not already been registered
         for (const preset of this.config.presets) {
@@ -137,9 +145,6 @@ export class PhilipsHuePlayHDMISyncBoxPlatform implements DynamicPlatformPlugin 
             }
         }
     }
-
-
-    private throttleId?: NodeJS.Timeout;
 
     refresh() {
         if (this.throttleId) {

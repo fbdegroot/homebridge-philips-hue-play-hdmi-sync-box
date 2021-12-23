@@ -6,7 +6,6 @@ export class Preset {
     intensity?: string;
     brightness?: number;
     uuid?: string;
-    syncActive?: boolean;
 
     constructor(name: string, uniqueId: string, init?: Partial<Preset>) {
         if (init) {

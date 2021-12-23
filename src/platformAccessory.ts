@@ -110,25 +110,26 @@ export class PhilipsHuePlayHDMISyncBoxPlatformAccessory {
         if (this.state === true) {
             const params: any = {};
 
-            if (this.preset.source) {
-                params.hdmiSource = this.preset.source;
+            if (this.preset.uniqueId === 'sync-off') {
+                params.syncActive = false;
             }
-
-            if (this.preset.brightness) {
-                params.brightness = this.preset.brightness;
-            }
-
-            if (this.preset.mode) {
-                params.mode = this.preset.mode;
-
-                if (this.preset.intensity) {
-                    params[this.preset.mode] = {};
-                    params[this.preset.mode].intensity = this.preset.intensity;
+            else {
+                if (this.preset.source) {
+                    params.hdmiSource = this.preset.source;
                 }
-            }
 
-            if (typeof this.preset.syncActive !== 'undefined') {
-                params.syncActive = this.preset.syncActive;
+                if (this.preset.brightness) {
+                    params.brightness = this.preset.brightness;
+                }
+
+                if (this.preset.mode) {
+                    params.mode = this.preset.mode;
+
+                    if (this.preset.intensity) {
+                        params[this.preset.mode] = {};
+                        params[this.preset.mode].intensity = this.preset.intensity;
+                    }
+                }
             }
 
             request({
