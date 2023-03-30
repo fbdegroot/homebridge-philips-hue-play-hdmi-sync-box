@@ -58,6 +58,8 @@ export class PhilipsHuePlayHDMISyncBoxPlatform implements DynamicPlatformPlugin 
      * It should be used to setup event handlers for characteristics and update respective values.
      */
     configureAccessory(accessory: PlatformAccessory): void {
+        // this.deleteAllCachedAccesories();
+
         this.log.info('Loading accessory from cache:', accessory.displayName);
 
         // add the restored accessory to the accessories cache so we can track if it has already been registered
@@ -78,6 +80,7 @@ export class PhilipsHuePlayHDMISyncBoxPlatform implements DynamicPlatformPlugin 
 
         const inputSourceUuid = this.api.hap.uuid.generate('Sync Box Accessory');
         const existingAccessory = this.accessories.find(accessory => accessory.UUID === inputSourceUuid);
+
         if (existingAccessory) {
             this.log.info('Restoring existing accessory from cache');
             existingAccessory.context.device = this.config.presets;

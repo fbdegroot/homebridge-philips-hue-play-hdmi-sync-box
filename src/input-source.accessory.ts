@@ -1,13 +1,8 @@
 import { CharacteristicGetCallback, CharacteristicSetCallback, CharacteristicValue, PlatformAccessory, Service } from 'homebridge';
+import { InputSourceAccessoryState } from './models/input-source-accessory-state.model';
 import { Preset } from './models/preset.model';
 import { PhilipsHuePlayHDMISyncBoxPlatform } from './platform';
 import { SyncBoxService } from './services/syncbox.service';
-
-export interface InputSourceAccessoryState {
-    active: boolean;
-    activeIdentifier: number;
-    activePreset: Preset | null;
-}
 
 export class InputSourceAccessory {
     private presets: Preset[];
@@ -59,8 +54,9 @@ export class InputSourceAccessory {
         }
 
         this.syncBoxService.syncBoxState$.subscribe(syncBoxState => {
-            // this.platform.log.debug('refresh response:');
-            // this.platform.log.debug(JSON.stringify(syncBoxState));
+            this.platform.log.info('Refresh response:');
+            this.platform.log.info(JSON.stringify(syncBoxState));
+
             this.state.active = syncBoxState.mode !== 'powersave';
             this.televionService.setCharacteristic(this.platform.Characteristic.Active, this.state.active);
 
@@ -78,7 +74,7 @@ export class InputSourceAccessory {
                 if (active) {
                     this.state.activePreset = this.presets[index];
                     this.state.activeIdentifier = index + 1;
-                    this.platform.log.debug(`Enabled ${this.presets[index].name}`);
+                    this.platform.log.info(`Enabled ${this.presets[index].name}`);
                     this.televionService.setCharacteristic(this.platform.Characteristic.ActiveIdentifier, index + 1);
                 }
             });
@@ -90,10 +86,15 @@ export class InputSourceAccessory {
             const index = Number(value) - 1;
             const preset = this.presets[index];
 
+            if (!preset) {
+                callback(null);
+                return;
+            }
+
             this.syncBoxService
                 .enablePreset(preset)
                 .then(() => {
-                    this.platform.log.debug(`Enabled ${preset.name}`);
+                    this.platform.log.info(`Enabled ${preset.name}`);
                 });
 
             callback(null);
@@ -106,7 +107,7 @@ export class InputSourceAccessory {
 
     getActiveIdentifier(callback: CharacteristicGetCallback): void {
         this.syncBoxService.refreshState();
-        this.platform.log.debug('Get Characteristic ActiveIdentifier ->', this.presets[this.state.activeIdentifier].name);
+        this.platform.log.info('Get Characteristic ActiveIdentifier ->', this.presets[this.state.activeIdentifier].name);
 
         // you must call the callback function
         // the first argument should be null if there were no errors
@@ -117,7 +118,7 @@ export class InputSourceAccessory {
     setActive(value: CharacteristicValue, callback: CharacteristicSetCallback): void {
         try {
             this.state.active = value === 1;
-            this.platform.log.debug('Set Characteristic Active ->', this.state.active);
+            this.platform.log.info('Set Characteristic Active ->', this.state.active);
             this.syncBoxService.togglePower(this.state.active);
             callback(null);
         }
@@ -129,7 +130,7 @@ export class InputSourceAccessory {
 
     getActive(callback: CharacteristicGetCallback): void {
         this.syncBoxService.refreshState();
-        this.platform.log.debug('Get Characteristic Active ->', this.state.active);
+        this.platform.log.info('Get Characteristic Active ->', this.state.active);
 
         callback(null, this.state.active);
     }

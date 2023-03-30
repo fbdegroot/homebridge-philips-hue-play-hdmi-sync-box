@@ -7,10 +7,10 @@ import { Preset } from '../models/preset.model';
 export class SyncBoxService {
     public readonly syncBoxState$: Observable<Execution>;
 
-    private readonly syncBoxStateSubject;
-    private throttleId?;
+    private readonly syncBoxStateSubject: ReplaySubject<Execution>;
     private readonly apiBasePath: string;
     private readonly apiExecutionPath: string;
+    private throttleId?;
 
     constructor(private ipAddress: string, private apiAccessToken: string, private log: Logger) {
         this.apiBasePath = '/api/v1';
@@ -30,23 +30,22 @@ export class SyncBoxService {
     enablePreset(preset: Preset): Promise<void> {
         const params: any = {};
 
-        if (preset.uniqueId === 'sync-off') {
-            params.syncActive = false;
+        if (!preset) {
+            return Promise.resolve();
         }
-        else {
-            if (preset.source) {
-                params.hdmiSource = preset.source;
-            }
-            if (preset.brightness) {
-                params.brightness = preset.brightness;
-            }
-            if (preset.mode) {
-                params.mode = preset.mode;
-                if (preset.intensity) {
-                    params[preset.mode] = {
-                        intensity: preset.intensity
-                    };
-                }
+
+        if (preset.source) {
+            params.hdmiSource = preset.source;
+        }
+        if (preset.brightness) {
+            params.brightness = preset.brightness;
+        }
+        if (preset.mode) {
+            params.mode = preset.mode;
+            if (preset.intensity) {
+                params[preset.mode] = {
+                    intensity: preset.intensity
+                };
             }
         }
 
@@ -64,13 +63,13 @@ export class SyncBoxService {
         }, 5000);
 
         this.log.info('Executing refresh call ...');
-        this.request('/api/v1/execution', 'GET')
+        this.request<Execution>('/api/v1/execution', 'GET')
             .then(body => {
                 this.syncBoxStateSubject.next(body);
             });
     }
 
-    private request(path: string, method: string, params: any = null): Promise<void> {
+    private request<T>(path: string, method: string, params: any = null): Promise<T> {
         return new Promise((resolve, reject) => {
             request({
                 uri: `https://${this.ipAddress}${path}`,
@@ -84,7 +83,7 @@ export class SyncBoxService {
                 rejectUnauthorized: false,
             }, (error, response, body) => {
                 if (!error && response.statusCode === 200) {
-                    resolve(body);
+                    resolve(body as T);
                 }
                 else {
                     if (error) {
