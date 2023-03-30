@@ -6,6 +6,7 @@ export class Preset {
     intensity?: string;
     brightness?: number;
     uuid?: string;
+    sync = true;
 
     constructor(name: string, uniqueId: string, init?: Partial<Preset>) {
         if (init) {
@@ -19,10 +20,11 @@ export class Preset {
 
     isValid(): boolean {
         return !!this.name && this.name !== '' &&
-            !!this.uniqueId && this.uniqueId !== '' &&
-            !!this.source && this.source !== '' &&
-            !!this.mode && this.mode !== '' &&
-            !!this.intensity && this.intensity !== '' &&
-            !!this.brightness;
+            !!this.uniqueId && this.uniqueId !== '';
+
+        /*!!this.source && this.source !== '' &&
+        !!this.mode && this.mode !== '' &&
+        !!this.intensity && this.intensity !== '' &&
+        !!this.brightness;*/
     }
 }

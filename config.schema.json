@@ -1,169 +1,182 @@
 {
-  "pluginAlias": "PhilipsHuePlayHDMISyncBoxPlugin",
-  "pluginType": "platform",
-  "singular": true,
-  "schema": {
-    "type": "object",
-    "properties": {
-      "name": {
-        "title": "Name",
-        "type": "string",
-        "required": true,
-        "default": "Philips Hue Play HDMI Platform"
-      },
-      "syncBoxIpAddress": {
-        "title": "IP Address",
-        "type": "string",
-        "required": true,
-        "format": "ipv4",
-        "description": "IP address of your Philips Hue Play HMDI Sync Box"
-      },
-      "syncBoxApiAccessToken": {
-        "title": "Access Token",
-        "type": "string",
-        "required": true,
-        "description": "Access token of your Philips Hue Play HMDI Sync Box"
-      },
-      "presets": {
-        "type": "array",
-        "minItems": 1,
-        "required": true,
-        "items": {
-          "title": "Presets",
-          "type": "object",
-          "properties": {
+    "pluginAlias": "PhilipsHuePlayHDMISyncBoxPlugin",
+    "pluginType": "platform",
+    "singular": true,
+    "schema": {
+        "type": "object",
+        "properties": {
             "name": {
-              "title": "Name",
-              "type": "string",
-              "required": true
+                "title": "Name",
+                "type": "string",
+                "required": true,
+                "default": "Philips Hue Play HDMI Platform"
             },
-            "uniqueId": {
-              "title": "Unique ID",
-              "type": "string",
-              "required": true
+            "syncBoxIpAddress": {
+                "title": "IP Address",
+                "type": "string",
+                "required": true,
+                "format": "ipv4",
+                "description": "IP address of your Philips Hue Play HMDI Sync Box"
             },
-            "source": {
-              "title": "Source",
-              "type": "string",
-              "required": false,
-              "oneOf": [
-                {
-                  "title": "HDMI 1",
-                  "enum": [
-                    "input1"
-                  ]
-                },
-                {
-                  "title": "HDMI 2",
-                  "enum": [
-                    "input2"
-                  ]
-                },
-                {
-                  "title": "HDMI 3",
-                  "enum": [
-                    "input3"
-                  ]
-                },
-                {
-                  "title": "HDMI 4",
-                  "enum": [
-                    "input4"
-                  ]
+            "syncBoxApiAccessToken": {
+                "title": "Access Token",
+                "type": "string",
+                "required": true,
+                "description": "Access token of your Philips Hue Play HMDI Sync Box"
+            },
+            "presets": {
+                "type": "array",
+                "minItems": 1,
+                "required": true,
+                "items": {
+                    "title": "Presets",
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "title": "Name",
+                            "type": "string",
+                            "required": true
+                        },
+                        "uniqueId": {
+                            "title": "Unique ID",
+                            "type": "string",
+                            "required": true
+                        },
+                        "sync": {
+                            "title": "Sync",
+                            "type": "boolean",
+                            "required": true,
+                            "default": true
+                        },
+                        "source": {
+                            "title": "Source",
+                            "type": "string",
+                            "required": false,
+                            "oneOf": [
+                                {
+                                    "title": "HDMI 1",
+                                    "enum": [
+                                        "input1"
+                                    ]
+                                },
+                                {
+                                    "title": "HDMI 2",
+                                    "enum": [
+                                        "input2"
+                                    ]
+                                },
+                                {
+                                    "title": "HDMI 3",
+                                    "enum": [
+                                        "input3"
+                                    ]
+                                },
+                                {
+                                    "title": "HDMI 4",
+                                    "enum": [
+                                        "input4"
+                                    ]
+                                }
+                            ]
+                        },
+                        "mode": {
+                            "title": "Mode",
+                            "type": "string",
+                            "required": false,
+                            "oneOf": [
+                                {
+                                    "title": "passthrough",
+                                    "enum": [
+                                        "passthrough"
+                                    ]
+
+                                },
+                                {
+                                    "title": "Video",
+                                    "enum": [
+                                        "video"
+                                    ]
+                                },
+                                {
+                                    "title": "Music",
+                                    "enum": [
+                                        "music"
+                                    ]
+                                },
+                                {
+                                    "title": "Game",
+                                    "enum": [
+                                        "game"
+                                    ]
+                                }
+                            ]
+                        },
+                        "intensity": {
+                            "title": "Intensity",
+                            "type": "string",
+                            "required": false,
+                            "oneOf": [
+                                {
+                                    "title": "Subtle",
+                                    "enum": [
+                                        "subtle"
+                                    ]
+                                },
+                                {
+                                    "title": "Moderate",
+                                    "enum": [
+                                        "moderate"
+                                    ]
+                                },
+                                {
+                                    "title": "High",
+                                    "enum": [
+                                        "high"
+                                    ]
+                                },
+                                {
+                                    "title": "Intense",
+                                    "enum": [
+                                        "intense"
+                                    ]
+                                }
+                            ]
+                        },
+                        "brightness": {
+                            "title": "Brightness",
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 200,
+                            "step": 1,
+                            "required": false
+                        }
+                    }
                 }
-              ]
-            },
-            "mode": {
-              "title": "Mode",
-              "type": "string",
-              "required": false,
-              "oneOf": [
-                {
-                  "title": "Video",
-                  "enum": [
-                    "video"
-                  ]
-                },
-                {
-                  "title": "Music",
-                  "enum": [
-                    "music"
-                  ]
-                },
-                {
-                  "title": "Game",
-                  "enum": [
-                    "game"
-                  ]
-                }
-              ]
-            },
-            "intensity": {
-              "title": "Intensity",
-              "type": "string",
-              "required": false,
-              "oneOf": [
-                {
-                  "title": "Subtle",
-                  "enum": [
-                    "subtle"
-                  ]
-                },
-                {
-                  "title": "Moderate",
-                  "enum": [
-                    "moderate"
-                  ]
-                },
-                {
-                  "title": "High",
-                  "enum": [
-                    "high"
-                  ]
-                },
-                {
-                  "title": "Intense",
-                  "enum": [
-                    "intense"
-                  ]
-                }
-              ]
-            },
-            "brightness": {
-              "title": "Brightness",
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 200,
-              "step": 1,
-              "required": false
             }
-          }
         }
-      }
-    }
-  },
-  "form": [
-    "name",
-    "syncBoxIpAddress",
-    "syncBoxApiAccessToken",
-    {
-      "type": "fieldset",
-      "expandable": false,
-      "items": [
+    },
+    "form": [
+        "name",
+        "syncBoxIpAddress",
+        "syncBoxApiAccessToken",
         {
-          "key": "presets",
-          "type": "array",
-          "items": [
-            "presets[].name",
-            "presets[].uniqueId",
-            "presets[].source",
-            "presets[].mode",
-            "presets[].intensity",
-            "presets[].brightness",
-            "presets[].syncActive"
-          ]
+            "type": "fieldset",
+            "expandable": false,
+            "items": [
+                {
+                    "key": "presets",
+                    "type": "array",
+                    "items": [
+                        "presets[].name",
+                        "presets[].uniqueId",
+                        "presets[].source",
+                        "presets[].mode",
+                        "presets[].intensity",
+                        "presets[].brightness",
+                        "presets[].sync"
+                    ]
+                }
+            ]
         }
-      ]
-    }
-  ]
+    ]
 }

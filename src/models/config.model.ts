@@ -8,6 +8,6 @@ export class Config implements PlatformConfig {
     name?: string | undefined;
     platform!: string;
     presets?: Preset[];
-    syncBoxApiAccessToken?: string;
-    syncBoxIpAddress?: string;
+    syncBoxApiAccessToken?: string | undefined;
+    syncBoxIpAddress?: string | undefined;
 }
