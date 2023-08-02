@@ -57,27 +57,36 @@ export class InputSourceAccessory {
             this.platform.log.info('Refresh response:');
             this.platform.log.info(JSON.stringify(syncBoxState));
 
-            this.state.active = syncBoxState.mode !== 'powersave';
-            this.televionService.setCharacteristic(this.platform.Characteristic.Active, this.state.active);
-
-            if (syncBoxState.mode === 'powersave' || syncBoxState.mode === 'passthrough') {
-                this.televionService.setCharacteristic(this.platform.Characteristic.ActiveIdentifier, 0);
-                return;
+            const isActive = syncBoxState.mode !== 'powersave';
+            if (this.state.active !== isActive) {
+                this.state.active = isActive;
+                this.televionService.setCharacteristic(this.platform.Characteristic.Active, this.state.active);
             }
 
-            this.presets.forEach((preset, index) => {
-                const active = syncBoxState.mode === preset.mode
-                    && syncBoxState.hdmiSource === preset.source
-                    && syncBoxState[syncBoxState.mode].intensity === preset.intensity
-                    && syncBoxState.brightness === preset.brightness;
+            if (syncBoxState.mode === 'powersave') {
+                this.televionService.setCharacteristic(this.platform.Characteristic.ActiveIdentifier, 0);
+            }
+            else {
+                this.presets.forEach((preset, index) => {
+                    const presetActive = syncBoxState.mode === preset.mode
+                        && syncBoxState.hdmiSource === preset.source
+                        && preset.sync === syncBoxState.syncActive
+                        && (syncBoxState.mode === 'passthrough' || (
+                            syncBoxState[syncBoxState.mode]
+                            && syncBoxState[syncBoxState.mode].intensity === preset.intensity
+                            && syncBoxState.brightness === preset.brightness));
 
-                if (active) {
-                    this.state.activePreset = this.presets[index];
-                    this.state.activeIdentifier = index + 1;
-                    this.platform.log.info(`Enabled ${this.presets[index].name}`);
-                    this.televionService.setCharacteristic(this.platform.Characteristic.ActiveIdentifier, index + 1);
-                }
-            });
+                    this.platform.log.info(`Preset ${this.presets[index].name} = ${presetActive}`);
+                    this.platform.log.info(JSON.stringify(preset));
+
+                    if (presetActive) {
+                        this.state.activePreset = this.presets[index];
+                        this.state.activeIdentifier = index + 1;
+                        this.platform.log.info(`Enabled ${this.presets[index].name}`);
+                        this.televionService.setCharacteristic(this.platform.Characteristic.ActiveIdentifier, index + 1);
+                    }
+                });
+            }
         });
     }
 
@@ -94,7 +103,7 @@ export class InputSourceAccessory {
             this.syncBoxService
                 .enablePreset(preset)
                 .then(() => {
-                    this.platform.log.info(`Enabled ${preset.name}`);
+                    this.platform.log.info(`Setting ${preset.name} on the device`);
                 });
 
             callback(null);
@@ -107,7 +116,13 @@ export class InputSourceAccessory {
 
     getActiveIdentifier(callback: CharacteristicGetCallback): void {
         this.syncBoxService.refreshState();
-        this.platform.log.info('Get Characteristic ActiveIdentifier ->', this.presets[this.state.activeIdentifier].name);
+        if (!this.presets[this.state.activeIdentifier]) {
+            this.platform.log.info(`ActiveIdentifier (${this.state.activeIdentifier}) ?`);
+            this.platform.log.info(JSON.stringify(this.presets));
+        }
+        else {
+            this.platform.log.info(`Get Characteristic ActiveIdentifier (${this.state.activeIdentifier}) ->`, this.presets[this.state.activeIdentifier].name);
+        }
 
         // you must call the callback function
         // the first argument should be null if there were no errors

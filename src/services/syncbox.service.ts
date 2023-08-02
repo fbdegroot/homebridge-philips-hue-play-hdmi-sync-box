@@ -10,7 +10,7 @@ export class SyncBoxService {
     private readonly syncBoxStateSubject: ReplaySubject<Execution>;
     private readonly apiBasePath: string;
     private readonly apiExecutionPath: string;
-    private throttleId?;
+    private throttleId?: NodeJS.Timeout;
 
     constructor(private ipAddress: string, private apiAccessToken: string, private log: Logger) {
         this.apiBasePath = '/api/v1';
@@ -70,7 +70,7 @@ export class SyncBoxService {
     }
 
     private request<T>(path: string, method: string, params: any = null): Promise<T> {
-        return new Promise((resolve, reject) => {
+        return new Promise<T>((resolve, reject) => {
             request({
                 uri: `https://${this.ipAddress}${path}`,
                 method: method,
